@@ -20,22 +20,24 @@ const app = express();
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 const PORT = process.env.PORT;
 const connect = async () => {
+  if (mongoose.connection.readyState >= 1) return;
   await mongoose.connect(uri);
-  console.log(mongoose.connection.host);
-  console.log('\n', "Connetced");
-}
+  console.log("Connected to MongoDB");
+};
 
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
-// في بداية المسارات التي تطلب MongoDB مثل /users أو /login
 app.get("/users", async (req, res) => {
-  if (mongoose.connection.readyState !== 1) {
-    await connect();
+  try {
+    await connect(); // تأمين الاتصال قبل الاستعلام
+    const users = await getAllThings();
+    res.json(users);
+  } catch (error) {
+    console.error("Users fetch error:", error);
+    res.status(500).json({ error: error.message });
   }
-  const users = await getAllThings();
-  res.json(users);
 });
 app.get("/", async (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
