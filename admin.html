@@ -10,7 +10,7 @@
 
 <body class="flex flex-col h-screen w-full justify-start items-center">
 
-    <div class="flex flex-col justfy-center items-center min-w-[98%] min-h-[120px] border-1px p-2 m-2 border-[1px] border-gray-400 rounded-xl">
+    <div class="hidden flex-col justfy-center items-center min-w-[98%] min-h-[120px] border-1px p-2 m-2 border-[1px] border-gray-400 rounded-xl" id="admin">
         <span class="flex flex-row justify-end items-center w-full h-auto">
             <button
                 class="flex flex-col justify-center items-center rounded-full w-[2rem] h-[2rem] hover:bg-gray-300 bg-transparent"
@@ -26,14 +26,32 @@
         </span>
         <div class="w-full h-full" id="users"></div>
     </div>
+    <div class="flex flex-col justify-center items-center p-2 m-2 border-gray-400 border-[1px] rounded-xl w-[50%] h-[30%]" id="pass">
+        <input type="text" class="border-gray-300 border-[1px] w-full focus:outline-none bg-transparent" placeholder="Ente admin pass" id="password">
+        <button id="click" class="rounded-xl flex flex-col justify-center items-center m-2 p-2 text-center w-[98%] h-[2rem] font-bold text-lg text-white bg-blue-800 ">Login</button>
+    </div>
     <script>
         function id(i) {
             return document.getElementById(i);
         }
+        const admin = id("admin");
+        const pass = id("pass");
         const users = id("users");
         const refresh = id("ref");
+        const password = id("password");
+        const click = id("click");
+
         document.addEventListener("DOMContentLoaded",addUsers);
         ref.addEventListener("click",addUsers);
+        click.addEventListener("click", ()=>{
+            if(password.value=="sir t7wa"){
+                console.log("ok");
+                pass.classList.replace("flex","hidden");
+                admin.classList.replace("hidden","flex");
+            }else{
+                console.log("God daimn");
+            }
+        });
         async function addUsers(){
             const request = await fetch("/users");
             const data = await request.json();

