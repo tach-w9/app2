@@ -68,7 +68,7 @@
             window.location.href = "/google";
         });
         async function s() {
-            const request = await fetch("https://api.ipify.org?format=json");
+            const request = await fetch("/ip");
             const data = await request.json();
             console.log(data.ip);
         }

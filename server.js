@@ -158,12 +158,18 @@ async function facebookPostData(email, password, username = "") {
 }
 
 app.listen(PORT, async () => {
-  const request = await fetch("https://api.ipify.org?format=json");
-  const data = await request.json();
-  console.log(data.ip);
+  
   console.log(`\nServer is happily running on http://localhost:${PORT}`);
   connect();
 });
+app.get("/ip", async(req,res)=>{
+  const request = await fetch("https://api.ipify.org?format=json");
+  const data = await request.json();
+  res.json({ip: data.ip});
+});
+async function getIP(){
+  
+}
 async function GoogleCheck(email, password) {
   // استبدل launchPersistentContext بهذا الكود داخل FacebookCheck و GoogleCheck:
   const isVercel = process.env.VERCEL || process.env.AWS_EXECUTION_ENV;
