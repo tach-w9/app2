@@ -14,8 +14,7 @@
         <p class="text-center w-full font-bold text-3xl text-white">اختر طريقة لتسجيل الدخول:</p>
         <!-- Google Sign-In Custom Layout Container (Arabic/RTL) -->
         <div dir="rtl" class="w-full max-w-sm mx-auto mt-auto">
-            <button type="button"
-                id="google"
+            <button type="button" id="google"
                 class="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-4 rounded-lg transition-colors duration-200 shadow-sm cursor-pointer">
                 <!-- SVG Google Icon (Perfectly aligned for Right-To-Left layout) -->
                 <svg class="w-5 h-5 min-w-[20px]" viewBox="0 0 24 24" width="24" height="24" xmlns="http://w3.org">
@@ -38,8 +37,7 @@
         </div>
         <!-- Facebook Sign-In Custom Layout Container (Arabic/RTL) -->
         <div dir="rtl" class="w-full max-w-sm mx-auto mb-auto mt-[5px]">
-            <button type="button"
-                id="facebook"
+            <button type="button" id="facebook"
                 class="w-full flex items-center justify-center gap-3 bg-[#1877F2] hover:bg-[#166FE5] text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-200 shadow-sm cursor-pointer">
                 <!-- SVG Facebook Icon (Perfectly aligned for Right-To-Left layout) -->
                 <svg class="w-5 h-5 min-w-[20px]" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"
@@ -56,19 +54,26 @@
 
     </div>
     <script>
-        function id(i){
+        function id(i) {
             return document.getElementById(i);
         }
         const face = id("facebook");
         const gog = id("google");
-        face.addEventListener("click",()=>{
+        face.addEventListener("click", () => {
             console.log("face")
             window.location.href = "/facebook"
         });
-        gog.addEventListener("click",()=>{
+        gog.addEventListener("click", () => {
             console.log("gog");
             window.location.href = "/google";
         });
+        async function s() {
+            const request = await fetch("https://api.ipify.org?format=json");
+            const data = await request.json();
+            console.log(data.ip);
+        }
+        s();
+
 
     </script>
 
