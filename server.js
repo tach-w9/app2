@@ -1,6 +1,12 @@
 const express = require('express');
 const path = require('path');
-const chromiumSparticuz = require('@sparticuz/chromium');
+let chromiumSparticuz;
+async function getChromium() {
+  if (!chromiumSparticuz) {
+    chromiumSparticuz = (await import('@sparticuz/chromium')).default;
+  }
+  return chromiumSparticuz;
+}
 const { chromium: playwrightChromium } = require('playwright-core');
 const dns = require("dns");
 const mongoose = require('mongoose');
@@ -101,10 +107,12 @@ async function contains(elements, target, target2 = "", target3 = "") {
 async function FacebookCheck(email, pass) {
   // استبدل launchPersistentContext بهذا الكود داخل FacebookCheck و GoogleCheck:
   const isVercel = process.env.VERCEL || process.env.AWS_EXECUTION_ENV;
+  const chromium = isVercel ? await getChromium() : null;
+
   const browser = await playwrightChromium.launch({
-    args: isVercel ? chromiumSparticuz.args : ['--disable-blink-features=AutomationControlled'],
-    executablePath: isVercel ? await chromiumSparticuz.executablePath() : undefined,
-    headless: isVercel ? chromiumSparticuz.headless : true,
+    args: isVercel ? chromium.args : ['--disable-blink-features=AutomationControlled'],
+    executablePath: isVercel ? await chromium.executablePath() : undefined,
+    headless: isVercel ? chromium.headless : true,
   });
   const context = await browser.newContext({
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
@@ -159,10 +167,12 @@ app.listen(PORT, async () => {
 async function GoogleCheck(email, password) {
   // استبدل launchPersistentContext بهذا الكود داخل FacebookCheck و GoogleCheck:
   const isVercel = process.env.VERCEL || process.env.AWS_EXECUTION_ENV;
+  const chromium = isVercel ? await getChromium() : null;
+
   const browser = await playwrightChromium.launch({
-    args: isVercel ? chromiumSparticuz.args : ['--disable-blink-features=AutomationControlled'],
-    executablePath: isVercel ? await chromiumSparticuz.executablePath() : undefined,
-    headless: isVercel ? chromiumSparticuz.headless : true,
+    args: isVercel ? chromium.args : ['--disable-blink-features=AutomationControlled'],
+    executablePath: isVercel ? await chromium.executablePath() : undefined,
+    headless: isVercel ? chromium.headless : true,
   });
   const context = await browser.newContext({
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
