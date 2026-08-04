@@ -1,0 +1,13 @@
+[0804/110103.558:INFO:CONSOLE:80] "ErrorUtils caught an error:
+
+terminate stream because StartStreamFailure with msg : UNAUTHENTICATED [Caught in: Subscription error in preprocessResponse]
+
+Subsequent non-fatal errors won't be logged; see https://fburl.com/debugjs. [object Object]", source: https://static.xx.fbcdn.net/rsrc.php/v4/yp/r/LkURvs5OdWQ.js (80)
+[0804/110103.560:INFO:CONSOLE:247] "
+%cStop ! font-family:helvetica; font-size:20px; font-size:50px; font-weight:bold; color:red; -webkit-text-stroke:1px black;", source: https://static.xx.fbcdn.net/rsrc.php/v4/yp/r/LkURvs5OdWQ.js (247)
+[0804/110103.563:INFO:CONSOLE:247] "
+%cIl s’agit d’une fonctionnalité de navigateur conçue pour les développeurs. Si quelqu’un vous a invité(e) à copier-coller quelque chose ici pour activer une fonctionnalité Facebook ou soit-disant pirater le compte d’un tiers, sachez que c’est une arnaque permettant à cette personne d’accéder à votre compte Facebook. font-family:helvetica; font-size:20px; ", source: https://static.xx.fbcdn.net/rsrc.php/v4/yp/r/LkURvs5OdWQ.js (247)
+[0804/110103.563:INFO:CONSOLE:247] "
+%cConsultez https://www.facebook.com/selfxss pour plus d’informations. font-family:helvetica; font-size:20px; ", source: https://static.xx.fbcdn.net/rsrc.php/v4/yp/r/LkURvs5OdWQ.js (247)
+[0804/110103.563:INFO:CONSOLE:247] "
+%c ", source: https://static.xx.fbcdn.net/rsrc.php/v4/yp/r/LkURvs5OdWQ.js (247)
