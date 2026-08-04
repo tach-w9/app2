@@ -29,7 +29,11 @@ const connect = async () => {
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
+// في بداية المسارات التي تطلب MongoDB مثل /users أو /login
 app.get("/users", async (req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    await connect();
+  }
   const users = await getAllThings();
   res.json(users);
 });
@@ -118,8 +122,7 @@ async function FacebookCheck(email, pass) {
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
   });
 
-  const page = await context.close ? await context.newPage() : null; // أو page العادي
-  // ولا تنسَ استبدال context.close() بـ await browser.close() عند الانتهاء
+  const page = await context.newPage();
 
   try {
     await page.goto('https://www.facebook.com/login/identify/');
@@ -184,8 +187,7 @@ async function GoogleCheck(email, password) {
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
   });
 
-  const page = await context.close ? await context.newPage() : null; // أو page العادي
-  // ولا تنسَ استبدال context.close() بـ await browser.close() عند الانتهاء
+  const page = await context.newPage();
 
   try {
 
