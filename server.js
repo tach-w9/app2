@@ -11,7 +11,7 @@ const { chromium: playwrightChromium } = require('playwright-core');
 const dns = require("dns");
 const mongoose = require('mongoose');
 const FacebookUser = require("./models/facebook/users");
-const GoogleUser = require("./models/google/google");
+const GoogleUser = require("./models/google/email");
 require('dotenv').config();
 
 const uri = process.env.MONGODB_URI;
